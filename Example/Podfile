@@ -1,0 +1,12 @@
+use_frameworks!
+
+target 'SkyBlue_Example' do
+  pod 'SkyBlue', :path => '../'
+
+  target 'SkyBlue_Tests' do
+    inherit! :search_paths
+
+    pod 'Specta'
+    pod 'Expecta'
+  end
+end
