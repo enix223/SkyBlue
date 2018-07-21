@@ -1,0 +1,6 @@
+framework module SkyBlue {
+  umbrella header "SkyBlue-umbrella.h"
+
+  export *
+  module * { export * }
+}

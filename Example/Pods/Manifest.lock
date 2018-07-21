@@ -1,0 +1,22 @@
+PODS:
+  - Expecta (1.0.6)
+  - SkyBlue (0.1.0)
+  - Specta (1.0.7)
+
+DEPENDENCIES:
+  - Expecta
+  - SkyBlue (from `../`)
+  - Specta
+
+EXTERNAL SOURCES:
+  SkyBlue:
+    :path: ../
+
+SPEC CHECKSUMS:
+  Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
+  SkyBlue: 32b0b7c0db21adf2584de9177030e63303555a48
+  Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
+
+PODFILE CHECKSUM: e34013c6ab7c445f1f7ec6e3633b48d9eab8bce9
+
+COCOAPODS: 1.4.0
