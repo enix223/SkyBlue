@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E250AB5212945BB00933D6E /* NSString+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E250AB4212945BB00933D6E /* NSString+Hex.m */; };
 		0E2B82CC210321870042A943 /* SBSessionController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E2B82CB210321870042A943 /* SBSessionController.m */; };
+		0EFBE311212922480083C9FF /* SBSettingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0EFBE310212922480083C9FF /* SBSettingController.m */; };
+		0EFBE3142129396E0083C9FF /* SBDetailController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0EFBE3132129396E0083C9FF /* SBDetailController.m */; };
+		0EFBE3172129425A0083C9FF /* NSData+Printable.m in Sources */ = {isa = PBXBuildFile; fileRef = 0EFBE3162129425A0083C9FF /* NSData+Printable.m */; };
 		1CB6AEC9ECF85C9A1E6BD1CA /* Pods_SkyBlue_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D0633F06B9891B50B1DCC9 /* Pods_SkyBlue_Example.framework */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
@@ -38,8 +42,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0E250AB3212945BB00933D6E /* NSString+Hex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Hex.h"; sourceTree = "<group>"; };
+		0E250AB4212945BB00933D6E /* NSString+Hex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Hex.m"; sourceTree = "<group>"; };
 		0E2B82CA210321870042A943 /* SBSessionController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBSessionController.h; sourceTree = "<group>"; };
 		0E2B82CB210321870042A943 /* SBSessionController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SBSessionController.m; sourceTree = "<group>"; };
+		0EFBE30F212922480083C9FF /* SBSettingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBSettingController.h; sourceTree = "<group>"; };
+		0EFBE310212922480083C9FF /* SBSettingController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SBSettingController.m; sourceTree = "<group>"; };
+		0EFBE3122129396E0083C9FF /* SBDetailController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBDetailController.h; sourceTree = "<group>"; };
+		0EFBE3132129396E0083C9FF /* SBDetailController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SBDetailController.m; sourceTree = "<group>"; };
+		0EFBE3152129425A0083C9FF /* NSData+Printable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Printable.h"; sourceTree = "<group>"; };
+		0EFBE3162129425A0083C9FF /* NSData+Printable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Printable.m"; sourceTree = "<group>"; };
 		230302384DB821F721F8B55D /* Pods-SkyBlue_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SkyBlue_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SkyBlue_Tests/Pods-SkyBlue_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		33D0633F06B9891B50B1DCC9 /* Pods_SkyBlue_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SkyBlue_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		498F2072C9DA3931F444FDFB /* Pods_SkyBlue_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SkyBlue_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -151,8 +163,16 @@
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* SBViewController.h */,
 				6003F5A6195388D20070C39A /* SBViewController.m */,
+				0EFBE30F212922480083C9FF /* SBSettingController.h */,
+				0EFBE310212922480083C9FF /* SBSettingController.m */,
 				0E2B82CA210321870042A943 /* SBSessionController.h */,
 				0E2B82CB210321870042A943 /* SBSessionController.m */,
+				0EFBE3122129396E0083C9FF /* SBDetailController.h */,
+				0EFBE3132129396E0083C9FF /* SBDetailController.m */,
+				0EFBE3152129425A0083C9FF /* NSData+Printable.h */,
+				0EFBE3162129425A0083C9FF /* NSData+Printable.m */,
+				0E250AB3212945BB00933D6E /* NSString+Hex.h */,
+				0E250AB4212945BB00933D6E /* NSString+Hex.m */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -417,8 +437,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F59E195388D20070C39A /* SBAppDelegate.m in Sources */,
+				0E250AB5212945BB00933D6E /* NSString+Hex.m in Sources */,
 				0E2B82CC210321870042A943 /* SBSessionController.m in Sources */,
+				0EFBE311212922480083C9FF /* SBSettingController.m in Sources */,
+				0EFBE3142129396E0083C9FF /* SBDetailController.m in Sources */,
 				6003F5A7195388D20070C39A /* SBViewController.m in Sources */,
+				0EFBE3172129425A0083C9FF /* NSData+Printable.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -7,6 +7,9 @@
 //
 
 #import "SBViewController.h"
+#import "SBSettingController.h"
+#import "SBDetailController.h"
+
 
 @import SkyBlue;
 
@@ -15,8 +18,6 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @property (nonatomic, strong) UIBarButtonItem *right;
-
-@property (nonatomic, assign) BOOL scanning;
 
 @property (nonatomic, strong) BLEManager *bleManager;
 
@@ -29,8 +30,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	
-    self.bleManager = [BLEManager sharedInstance];
+    
+    self.title = @"SkyBlue";
     
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
@@ -42,25 +43,39 @@
               target:self
               action:@selector(scanDidTap:)];
     
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
+                                             initWithTitle:@"Setting"
+                                             style:UIBarButtonItemStylePlain
+                                             target:self
+                                             action:@selector(settingDidTap)];
+    
+    self.bleManager = [BLEManager sharedInstance];
+    
     self.navigationItem.rightBarButtonItem = _right;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [self addObserver:self forKeyPath:@"scanning" options:NSKeyValueObservingOptionNew context:nil];
+    [self.bleManager addObserver:self forKeyPath:@"scanning" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    [self removeObserver:self forKeyPath:@"scanning"];
+    [self.bleManager removeObserver:self forKeyPath:@"scanning"];
     
     [super viewWillDisappear:animated];
 }
 
+- (void)settingDidTap {
+    SBSettingController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil]
+                               instantiateViewControllerWithIdentifier:@"SBSettingController"];
+    
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 - (void)scanDidTap:(id)sender {
-    if (self.scanning) {
+    if (_bleManager.scanning) {
         [_bleManager stopScan];
-        self.scanning = NO;
     } else {
         [self refreshDevice];
     }
@@ -86,7 +101,6 @@
     
     [_bleManager reset];
     
-    self.scanning = YES;
     __weak typeof(self) weakself = self;
     [_bleManager scanPeripheralWithUUIDs:nil resultCallback:^(NSDictionary *devices, NSError *error) {
         __strong typeof(weakself) strongself = weakself;
@@ -113,20 +127,32 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 90.0;
+    return 50.0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
     }
     
     BLEPeripheral *peripheral = [self.devices objectAtIndex:indexPath.row];
     
     cell.textLabel.text = peripheral.peripheral.name;
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"RSSI: %ld", (long) peripheral.rssi];
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [_bleManager stopScan];
+    
+    SBDetailController *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil]
+                              instantiateViewControllerWithIdentifier:@"SBDetailController"];
+    
+    BLEPeripheral *peripheral = [self.devices objectAtIndex:indexPath.row];
+    vc.peripheral = peripheral;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 @end

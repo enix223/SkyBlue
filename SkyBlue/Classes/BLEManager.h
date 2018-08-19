@@ -9,7 +9,57 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class BLEPeripheral;
+
+// -------------------------------------------------------------------------
+#pragma mark - Error code
+// -------------------------------------------------------------------------
+
+/// Error code
+typedef NS_ENUM(NSUInteger, SBErrorCode) {
+    /// Connect peripheral timeout
+    SBErrorCodeConnectTimeout = -10001,
+    
+    /// Enumerate peripheral timeout
+    SBErrorCodeEnumerateTimeout = -10002,
+    
+    /// Send data to  peripheral timeout
+    SBErrorCodeSendDataTimeout = -10003,
+};
+
+// -------------------------------------------------------------------------
+#pragma mark - Callbacks
+// -------------------------------------------------------------------------
+
+/// Scan result callback
+typedef void(^ScanCallback)(NSDictionary<NSUUID *, BLEPeripheral *> * _Nullable discoverredPeripherals,
+                            NSError * _Nullable error);
+
+// -------------------------------------------------------------------------
+
+/// Connect peripheral callback (if success, success = @(YES), otherwise, error will be the reason
+typedef void(^ConnectCallback)(NSNumber *success, NSError * _Nullable error);
+
+// -------------------------------------------------------------------------
+
+/// Characteristic value update callback
+typedef void(^ValueUpdateCallback)(NSData * _Nullable data, NSError * _Nullable error);
+
+// -------------------------------------------------------------------------
+
+/// Callback for disconnect peripheral operation
+typedef void(^DisconnectCallback)(NSNumber * _Nullable success, NSError * _Nullable error);
+
+// -------------------------------------------------------------------------
+
+/// Callback for write operation (only available when peripheral support `Write with response`
+typedef void(^WriteResultCallback)(NSNumber * _Nullable success, NSError * _Nullable error);
+
+// -------------------------------------------------------------------------
+#pragma mark - Notification
+// -------------------------------------------------------------------------
 
 /// Disconnect notification
 extern NSString *BLENotificationDisconnected;
@@ -17,11 +67,15 @@ extern NSString *BLENotificationDisconnected;
 /// Scan stop notification
 extern NSString *BLENotificationScanStopped;
 
-typedef void (^BluetoothCallback)(id data, NSError *error);
-
+// -------------------------------------------------------------------------
 @interface BLEManager : NSObject
+// -------------------------------------------------------------------------
 
-#pragma mark - SDK
+
+// -------------------------------------------------------------------------
+#pragma mark - properties
+// -------------------------------------------------------------------------
+
 
 /**
  * Internal CBCentralManager
@@ -65,6 +119,11 @@ typedef void (^BluetoothCallback)(id data, NSError *error);
 @property (nonatomic, assign) NSTimeInterval enumerateTimeout;
 
 /**
+ * The timeout interval for write with response operation
+ */
+@property (nonatomic, assign) NSTimeInterval sendDataTimeout;
+
+/**
  * Whether BLE module is enable or not. If not, then scan/connect will not be performed
  */
 @property (nonatomic, readonly) BOOL enable;
@@ -84,15 +143,29 @@ typedef void (^BluetoothCallback)(id data, NSError *error);
  */
 @property (nonatomic, readonly) BOOL enumerating;
 
+
+// -------------------------------------------------------------------------
+#pragma mark - Public API
+// -------------------------------------------------------------------------
+
+
 /**
  * Get singleton instance
  */
 + (instancetype)sharedInstance;
 
+
+// -------------------------------------------------------------------------
+
+
 /**
- * Reset the internal cache
+ * Reset the SDK
  */
 - (void)reset;
+
+
+// -------------------------------------------------------------------------
+
 
 /**
  * Scan BLE peripherals
@@ -101,8 +174,12 @@ typedef void (^BluetoothCallback)(id data, NSError *error);
  * @param callback      The callback is invoke when a peripheral is discoverred.
  * @return              YES if scan operation succcess, NO if scan operation is not triggered.
  */
-- (BOOL)scanPeripheralWithUUIDs:(NSArray<NSString *> *)uuids
-                 resultCallback:(BluetoothCallback)callback;
+- (BOOL)scanPeripheralWithUUIDs:(NSArray<NSString *> * _Nullable)uuids
+                 resultCallback:(ScanCallback)callback;
+
+
+// -------------------------------------------------------------------------
+
 
 /**
  * Stop scanning BLE peripheral
@@ -116,7 +193,10 @@ typedef void (^BluetoothCallback)(id data, NSError *error);
  * @param completion        Completion will be invoked when connect is done or failed.
  */
 - (BOOL)connectPeripheral:(BLEPeripheral *)peripheral
-               completion:(BluetoothCallback)completion;
+               completion:(ConnectCallback)completion;
+
+// -------------------------------------------------------------------------
+
 
 /**
  * Subscribe notification for characteristic.
@@ -127,7 +207,10 @@ typedef void (^BluetoothCallback)(id data, NSError *error);
  */
 - (BOOL)subscribeNotificationForPeripheral:(BLEPeripheral *)peripheral
                          forCharacteristic:(CBCharacteristic *)characteristic
-                            resultCallback:(BluetoothCallback)callback;
+                            resultCallback:(ValueUpdateCallback)callback;
+
+// -------------------------------------------------------------------------
+
 
 /**
  * Subscribe notification for characteristic UUID.
@@ -138,7 +221,10 @@ typedef void (^BluetoothCallback)(id data, NSError *error);
  */
 - (BOOL)subscribeNotificationForPeripheral:(BLEPeripheral *)peripheral
                         characteristicUUID:(NSString *)characteristicUUID
-                            resultCallback:(BluetoothCallback)callback;
+                            resultCallback:(ValueUpdateCallback)callback;
+
+// -------------------------------------------------------------------------
+
 
 /**
  * Unsubscribe notification for characteristic
@@ -150,6 +236,9 @@ typedef void (^BluetoothCallback)(id data, NSError *error);
 - (BOOL)unsubscribeNotificationForPeripheral:(BLEPeripheral *)peripheral
                            forCharacteristic:(CBCharacteristic *)characteristic;
 
+// -------------------------------------------------------------------------
+
+
 /**
  * Disconnect BLE peripheral
  *
@@ -158,7 +247,11 @@ typedef void (^BluetoothCallback)(id data, NSError *error);
  * @return:                 YES if operation success, NO if not.
  */
 - (BOOL)disconnectPeripheral:(BLEPeripheral *)peripheral
-                  completion:(BluetoothCallback)completion;
+                  completion:(DisconnectCallback)completion;
+
+
+// -------------------------------------------------------------------------
+
 
 /**
  * Send data to characteristic
@@ -172,7 +265,11 @@ typedef void (^BluetoothCallback)(id data, NSError *error);
 -   (BOOL)sendData:(NSData *)data
       toPeripheral:(BLEPeripheral *)peripheral
 withCharacteristic:(CBCharacteristic *)characteristic
-        completion:(_Nullable BluetoothCallback)completion;
+        completion:(_Nullable WriteResultCallback)completion;
+
+
+// -------------------------------------------------------------------------
+
 
 /**
  * Send data to characteristic (uuid)
@@ -186,7 +283,11 @@ withCharacteristic:(CBCharacteristic *)characteristic
 -   (BOOL)sendData:(NSData *)data
       toPeripheral:(BLEPeripheral *)peripheral
 characteristicUUID:(NSString *)characteristicUUID
-        completion:(_Nullable BluetoothCallback)completion;
+        completion:(_Nullable WriteResultCallback)completion;
+
+
+// -------------------------------------------------------------------------
+
 
 /**
  * Read value from peripheral's characteristic
@@ -198,6 +299,11 @@ characteristicUUID:(NSString *)characteristicUUID
  */
 - (BOOL)readPeripheral:(BLEPeripheral *)peripheral
     withCharacteristic:(CBCharacteristic *)characteristic
-            completion:(BluetoothCallback)completion;
+            completion:(ValueUpdateCallback)completion;
+
+
+// -------------------------------------------------------------------------
 
 @end
+
+NS_ASSUME_NONNULL_END
