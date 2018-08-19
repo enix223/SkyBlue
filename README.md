@@ -28,12 +28,27 @@ pod 'SkyBlue'
 
 ```objc
 self.bleManager = [BLEManager sharedInstance];
+
+// Set scan timeout to 10 sec, only available when `continousScan` = NO
+self.bleManager.scanInterval = 10;
+
+// Scan will not terminate until user invoke `stopScan`
+self.bleManager.continousScan = YES;
+
+// Set connect timeout to 10 sec
+self.bleManager.connectTimeout = 10;
+
+// Set enumeration timeout to 10 sec
+self.bleManager.enumerateTimeout = 10;
+
+// Set write characteristic value timeout to 10 sec
+self.bleManager.sendDataTimeout = 10;
 ```
 
 2. Scan
 
 ```objc
-[_bleManager scanPeripheralWithUUIDs:uuids resultCallback:^(NSDictionary *devices, NSError *error) {
+[_bleManager scanPeripheralWithUUIDs:uuids resultCallback:^(NSDictionary<NSUUID *, BLEPeripheral *> *devices, NSError *error) {
     NSMutableArray *devs = [NSMutableArray array];
     [devices enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         NSLog(@"Device UUID: @%", key);
@@ -120,6 +135,14 @@ extern NSString *BLENotificationDisconnected;
 extern NSString *BLENotificationScanStopped;
 
 ```
+
+## CHANGELOG
+
+### v0.2.0
+
+1. Remove NSAssert from the BLEManager
+2. Support creating multiple connections to different peripherals simultaneously.
+3. Add write operation timer to detect write value timeout
 
 ## Author
 
