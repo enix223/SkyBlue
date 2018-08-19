@@ -61,7 +61,7 @@ self.bleManager.sendDataTimeout = 10;
 3. Connect
 
 ```objc
-[_bleManager connectPeripheral:peripheral completion:^(id data, NSError *error) {
+[_bleManager connectPeripheral:peripheral completion:^(NSNumber *success, NSError *error) {
     if (error) {
         NSLog(@"Failed to connect BLE Peripheral");
     } else {
@@ -111,7 +111,7 @@ _bleManager.connectedPeripherals
 [_bleManager sendData:data
  toPeripheral:peripheral
  characteristicUUID:characteristicUUID
- completion:^(id res, NSError *error) {
+ completion:^(NSNumber *success, NSError *error) {
     // error indicate the write operation is success or not
  }];
 ```
@@ -120,7 +120,7 @@ _bleManager.connectedPeripherals
 
 ```objc
 [_bleManager disconnectPeripheral:peripheral
-                       completion:^(NSData *data, NSError *error) {
+                       completion:^(NSNumber *success, NSError *error) {
                             // Indicate disconnect or not
                        };
 ```
