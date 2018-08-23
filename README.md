@@ -138,6 +138,10 @@ extern NSString *BLENotificationScanStopped;
 
 ## CHANGELOG
 
+### v0.2.1
+
+1. Fix connect callback invoke before peripheral state changed issue.
+
 ### v0.2.0
 
 1. Remove NSAssert from the BLEManager
