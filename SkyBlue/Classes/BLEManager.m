@@ -815,7 +815,6 @@ characteristicUUID:(NSString *)characteristicUUID
         
         if (enumerateFinished) {
             NSLog(@"[BLEManager] -DEBUG-: Peripheral Enumerate finished");
-            _enumerateCompletion(@(YES), nil);
             
             BLEPeripheral *blePeripheral = [self getPeripheralByUUID:peripheral.identifier];
             if (blePeripheral) {
@@ -824,8 +823,9 @@ characteristicUUID:(NSString *)characteristicUUID
                 NSLog(@"[BLEManager] -Error-: Enumerated peripheral is not found in the scan list");
             }
             
-            _enumerateCompletion = nil;
             _enumerating = NO;
+            _enumerateCompletion(@(YES), nil);
+            _enumerateCompletion = nil;
         }
     }
 }
