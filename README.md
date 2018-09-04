@@ -5,6 +5,8 @@
 [![License](https://img.shields.io/cocoapods/l/SkyBlue.svg?style=flat)](https://cocoapods.org/pods/SkyBlue)
 [![Platform](https://img.shields.io/cocoapods/p/SkyBlue.svg?style=flat)](https://cocoapods.org/pods/SkyBlue)
 
+![](/screenshoot/showcase.png)
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
