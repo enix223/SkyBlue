@@ -54,5 +54,9 @@ typedef NS_ENUM(NSUInteger, BLEPeripheralState) {
  */
 @property (nonatomic, strong) NSMutableArray<CBCharacteristic *> *characteristics;
 
+/**
+ * The latest advertisement data from the peripheral broadcast
+ */
+@property (nonatomic, strong) NSDictionary<NSString *, id> *advertisementData;
 
 @end

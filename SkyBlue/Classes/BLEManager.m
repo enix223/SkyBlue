@@ -654,9 +654,11 @@ characteristicUUID:(NSString *)characteristicUUID
         blePeripheral.identifier = peripheral.identifier;
         blePeripheral.peripheral = peripheral;
         blePeripheral.rssi = [RSSI floatValue];
+        blePeripheral.advertisementData = advertisementData;
         _discoverredPeripherals[peripheral.identifier] = blePeripheral;
     } else {
         blePeripheral.rssi = [RSSI floatValue];
+        blePeripheral.advertisementData = advertisementData;
     }
     
     blePeripheral.lastSeen = [NSDate date];

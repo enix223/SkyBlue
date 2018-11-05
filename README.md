@@ -138,6 +138,10 @@ extern NSString *BLENotificationScanStopped;
 
 ## CHANGELOG
 
+### v0.3.0
+
+1. Add advertisement data field to BLEPeripheral class, this is helpful for developer to access the latest advertisement data received from the peripheral.
+
 ### v0.2.1
 
 1. Fix connect callback invoke before peripheral state changed issue.
