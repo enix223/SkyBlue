@@ -140,6 +140,12 @@ extern NSString *BLENotificationScanStopped;
 
 ## CHANGELOG
 
+### v0.4.0
+
+1. Remove the absence interval property
+2. Remove the absence checking logic
+3. Change the scan callback back function to return a peripheral at a time
+
 ### v0.3.0
 
 1. Add advertisement data field to BLEPeripheral class, this is helpful for developer to access the latest advertisement data received from the peripheral.

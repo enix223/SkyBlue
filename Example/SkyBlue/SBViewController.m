@@ -21,7 +21,7 @@
 
 @property (nonatomic, strong) BLEManager *bleManager;
 
-@property (nonatomic, strong) NSArray<BLEPeripheral *> *devices;
+@property (nonatomic, strong) NSMutableArray<BLEPeripheral *> *devices;
 
 @end
 
@@ -36,6 +36,7 @@
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.tableFooterView = [UIView new];
+    self.devices = [NSMutableArray array];
     
     _right = [[UIBarButtonItem alloc]
               initWithTitle:@"Scan"
@@ -99,19 +100,32 @@
         [_bleManager stopScan];
     }
     
+    [self.devices removeAllObjects];
     [_bleManager reset];
     
     __weak typeof(self) weakself = self;
-    [_bleManager scanPeripheralWithUUIDs:nil resultCallback:^(NSDictionary *devices, NSError *error) {
-        __strong typeof(weakself) strongself = weakself;
-        NSMutableArray *devs = [NSMutableArray array];
-        [devices enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-            [devs addObject:obj];
-        }];
-        
-        strongself.devices = devs;
+    [_bleManager scanPeripheralWithUUIDs:nil resultCallback:^(BLEPeripheral *dev, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [strongself.tableView reloadData];
+            __strong typeof(weakself) strongself = weakself;
+            __block BOOL found = NO;
+            
+            if ([weakself.devices count] == 0) {
+                [weakself.devices addObject:dev];
+                [strongself.tableView reloadData];
+            } else {
+                [weakself.devices enumerateObjectsUsingBlock:^(BLEPeripheral * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj.identifier isEqual:dev.identifier]) {
+                        found = YES;
+                        *stop  = YES;
+                    }
+                }];
+
+                if (!found) {
+                    NSIndexPath *path = [NSIndexPath indexPathForRow:[weakself.devices count] inSection:0];
+                    [weakself.devices addObject:dev];
+                    [strongself.tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
+                }
+            }
         });
     }];
 }

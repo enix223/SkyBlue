@@ -146,12 +146,12 @@ NSString *BLENotificationScanStopped = @"SkyBlue.scanStopped";
     _connectedPeripherals = [NSMutableDictionary dictionary];
     _notificationCallbacks = [NSMutableDictionary dictionary];
     _enumeratedServices = [NSMutableDictionary dictionary];
-    _absenceInterval = 10;
     _scanInterval = 5;
     _connectTimeout = 5;
     _enumerateTimeout = 5;
     _sendDataTimeout = 5;
     _continousScan = YES;
+    _allowDuplicate = NO;
     
     dispatch_queue_t queue = dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0);
     _manager = [[CBCentralManager alloc] initWithDelegate:self queue:queue];
@@ -175,6 +175,9 @@ NSString *BLENotificationScanStopped = @"SkyBlue.scanStopped";
     self.connecting = NO;
     self.scanning = NO;
     self.enumerating = NO;
+    
+    [_scanTimer invalidate];
+    _scanTimer = nil;
     
     _connectCompletion = nil;
     _enumerateCompletion = nil;
@@ -206,7 +209,9 @@ NSString *BLENotificationScanStopped = @"SkyBlue.scanStopped";
         [cbuuid addObject:[CBUUID UUIDWithString:obj]];
     }];
     
-    [_manager scanForPeripheralsWithServices:cbuuid options:nil];
+    [_manager
+     scanForPeripheralsWithServices:cbuuid
+     options:@{CBCentralManagerScanOptionAllowDuplicatesKey: @(self.allowDuplicate)}];
     self.scanning = YES;
     
     if (!_continousScan) {
@@ -265,7 +270,7 @@ NSString *BLENotificationScanStopped = @"SkyBlue.scanStopped";
             enumeratingPeripheral.state = BLEPeripheralStateUnknown;
             [_connectedPeripherals removeObjectForKey:peripheralUUID];
         }
-
+        
         _connectCompletion(@(NO), err);
         _connectCompletion = nil;
     }
@@ -444,7 +449,7 @@ NSString *BLENotificationScanStopped = @"SkyBlue.scanStopped";
 
 /// Send data to characteristic
 - (BOOL)sendData:(NSData *)data
-        toPeripheral:(BLEPeripheral *)peripheral
+    toPeripheral:(BLEPeripheral *)peripheral
 withCharacteristic:(CBCharacteristic *)characteristic
       completion:(_Nullable WriteResultCallback)completion {
     
@@ -477,10 +482,10 @@ withCharacteristic:(CBCharacteristic *)characteristic
                                                             selector:@selector(sendTimeout:)
                                                             userInfo:nil
                                                              repeats:YES];
-
+                
                 [peripheral.peripheral writeValue:packet
-                            forCharacteristic:characteristic
-                                         type:CBCharacteristicWriteWithResponse];
+                                forCharacteristic:characteristic
+                                             type:CBCharacteristicWriteWithResponse];
                 
                 return YES;
             } else {
@@ -546,9 +551,9 @@ characteristicUUID:(NSString *)characteristicUUID
         peripheral.state == BLEPeripheralStateConnected) {
         
         peripheral.peripheral.delegate = nil;
-
+        
         _disconnectCallback = completion;
-
+        
         NSLog(@"[BLEManager] Droping peripheral connection");
         [_manager cancelPeripheralConnection:peripheral.peripheral];
         return YES;
@@ -663,17 +668,8 @@ characteristicUUID:(NSString *)characteristicUUID
     
     blePeripheral.lastSeen = [NSDate date];
     
-    weakify(self)
-    __weak typeof(_discoverredPeripherals) weakDiscoverPeripherals = _discoverredPeripherals;
-    [_discoverredPeripherals enumerateKeysAndObjectsUsingBlock:^(NSUUID * _Nonnull key, BLEPeripheral * _Nonnull obj, BOOL * _Nonnull stop) {
-        strongify(self)
-        if ([obj.lastSeen timeIntervalSinceDate:[NSDate date]] > strongself.absenceInterval) {
-            [weakDiscoverPeripherals removeObjectForKey:key];
-        }
-    }];
-    
     if (_scanCallback) {
-        _scanCallback(_discoverredPeripherals, nil);
+        _scanCallback(blePeripheral, nil);
     }
 }
 
@@ -700,7 +696,7 @@ characteristicUUID:(NSString *)characteristicUUID
     [_connectTimer invalidate];
     _connectTimer = nil;
     _connecting = NO;
-
+    
     [_connectedPeripherals removeObjectForKey:peripheral.identifier];
     
     if (_connectCompletion) {
@@ -710,6 +706,9 @@ characteristicUUID:(NSString *)characteristicUUID
 }
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(nullable NSError *)error {
+    _connecting = NO;
+    _enumerating = NO;
+    
     if (error) {
         NSLog(@"[BLEManager] -ERROR-: Connection dropped for peripheral %@!!", peripheral.identifier.UUIDString);
     } else {
@@ -791,7 +790,7 @@ characteristicUUID:(NSString *)characteristicUUID
 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(nullable NSError *)error {
     BLEPeripheral *enumeratingPeripheral = [_connectedPeripherals objectForKey:peripheral.identifier];
-
+    
     if (_enumerateCompletion != nil && enumeratingPeripheral != nil) {
         _enumeratedServices[service.UUID] = @(YES);
         

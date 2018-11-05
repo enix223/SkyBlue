@@ -34,8 +34,7 @@ typedef NS_ENUM(NSUInteger, SBErrorCode) {
 // -------------------------------------------------------------------------
 
 /// Scan result callback
-typedef void(^ScanCallback)(NSDictionary<NSUUID *, BLEPeripheral *> * _Nullable discoverredPeripherals,
-                            NSError * _Nullable error);
+typedef void(^ScanCallback)(BLEPeripheral *peripheral, NSError * _Nullable error);
 
 // -------------------------------------------------------------------------
 
@@ -98,11 +97,6 @@ extern NSString *BLENotificationScanStopped;
 @property (nonatomic, assign) NSTimeInterval scanInterval;
 
 /**
- * How many seconds are passed when peripheral last seen by scan
- */
-@property (nonatomic, assign) NSTimeInterval absenceInterval;
-
-/**
  * Whether trigger continous peripheral scan. Scan will be stopped until user invoke -stopScan:
  */
 @property (nonatomic, assign) BOOL continousScan;
@@ -142,6 +136,11 @@ extern NSString *BLENotificationScanStopped;
  * Indicate the BLE Manager is busy with enumerating peripheral or not
  */
 @property (nonatomic, readonly) BOOL enumerating;
+
+/**
+ * Scan: Allow duplicate flag
+ */
+@property (nonatomic, assign) BOOL allowDuplicate;
 
 
 // -------------------------------------------------------------------------
