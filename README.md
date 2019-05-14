@@ -140,6 +140,10 @@ extern NSString *BLENotificationScanStopped;
 
 ## CHANGELOG
 
+### v0.5.0
+
+1. Do not specify service uuid when discovering services
+
 ### v0.4.0
 
 1. Remove the absence interval property
