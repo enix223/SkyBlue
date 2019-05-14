@@ -373,7 +373,7 @@ NSString *BLENotificationScanStopped = @"SkyBlue.scanStopped";
     peripheral.services = nil;
     [peripheral.characteristics removeAllObjects];
     
-    [peripheral.peripheral discoverServices:[self uuidStringsToCBUUID:self.scanUUIDs]];
+    [peripheral.peripheral discoverServices:nil];
     _enumerating = YES;
     
     NSDictionary *userinfo = nil;
