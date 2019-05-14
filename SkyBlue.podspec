@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SkyBlue'
-  s.version          = '0.4.0'
+  s.version          = '0.5.0'
   s.summary          = 'Yet another Bluetooth library for iOS'
   s.description      = <<-DESC
 To build an easy to use iOS BLE library
